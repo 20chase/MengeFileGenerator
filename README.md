@@ -50,7 +50,7 @@ The **Spawn** XML node defines the points at which agents will enter the simulat
 * The ‘max’ attribute defines the maximum amount of time (steps in the simulation) an agent will wait before entering the simulation. This defaults to 0.
 * The wait time for agents in the group will be uniformly distributed between the minimum and maximum values.
 * The **Spawn** XML node must have one color XML node. See [_Defining a Color_](#defining-a-color) for details on defining this type of XML node.
-  * Spawn location(s) will be chosen from the provided spawn points. If there are multiple possible spawn points, agents will uniformly distribute themselves between all eligible spawn points. See [_Creating the Scenario Behavior PNG File_](#2.-creating-the-scenario-behavior-png-file) for details on creating this file.
+  * Spawn location(s) will be chosen from the provided spawn points. If there are multiple possible spawn points, agents will uniformly distribute themselves between all eligible spawn points. See [_Creating the Scenario Behavior PNG File_](#2-creating-the-scenario-behavior-png-file) for details on creating this file.
 * The **Spawn** XML node must have at least one transition XML node. See [_Defining a Transition_](#defining-a-transition) for details on defining this type of XML node.
 * In the example below agents in this group will wait 100 steps before spawning at a random location specified by color. Afterwards, the agent will transition to the next goal set.
 ```xml
@@ -71,7 +71,7 @@ The ‘GoalSet’ XML node defines properties of a goal and the next goal set ag
 * The **max** attribute defines the maximum amount of time (steps in the simulation) an agent will wait before transitioning to another goal. This defaults to 0.
 The wait time for agents in the group will be uniformly distributed between the minimum and maximum values.
 * The **GoalSet** XML node must have one color XML node. See [_Defining a Color_](#defining-a-color) for details on defining this type of XML node.
-  * Goal location(s) will be chosen from the provided goal points. If there are multiple possible spawn points, agents will uniformly distribute themselves between all eligible goal points. See [_Creating the Scenario Behavior PNG File_](#2.-creating-the-scenario-behavior-png-file) for details on creating this file.
+  * Goal location(s) will be chosen from the provided goal points. If there are multiple possible spawn points, agents will uniformly distribute themselves between all eligible goal points. See [_Creating the Scenario Behavior PNG File_](#2-creating-the-scenario-behavior-png-file) for details on creating this file.
 * The **GoalSet** XML node must have at least one transition XML node. See [_Defining a Transition_](#defining-a-transition) for details on defining this type of XML node.
   * If the goal set specified in a transition is the same as the current goal set, the agent will wait at its current goal.
 * All **GoalSet** XML nodes have an implicit ID associated with them. This ID is based off the order in which a goal set is defined. This ID is on a per group basis.
