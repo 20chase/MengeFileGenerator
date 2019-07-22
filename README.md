@@ -47,7 +47,7 @@ The XML File must have a root XML node titled **Data** as shown below:
 ## Defining the Group Spawn Node
 The **Spawn** XML node defines the points at which agents will enter the simulation. Spawns are defined inside of the group XML node.
 * The **min** attribute defines the minimum amount of time (steps in the simulation) an agent will wait before entering the simulation. This defaults to 0.
-* The ‘max’ attribute defines the maximum amount of time (steps in the simulation) an agent will wait before entering the simulation. This defaults to 0.
+* The **max** attribute defines the maximum amount of time (steps in the simulation) an agent will wait before entering the simulation. This defaults to 0.
 * The wait time for agents in the group will be uniformly distributed between the minimum and maximum values.
 * The **Spawn** XML node must have one color XML node. See [_Defining a Color_](#defining-a-color) for details on defining this type of XML node.
   * Spawn location(s) will be chosen from the provided spawn points. If there are multiple possible spawn points, agents will uniformly distribute themselves between all eligible spawn points. See [_Creating the Scenario Behavior PNG File_](#2-creating-the-scenario-behavior-png-file) for details on creating this file.
@@ -65,7 +65,7 @@ The **Spawn** XML node defines the points at which agents will enter the simulat
 ```
 
 ## Defining Group Goal Set Nodes
-The ‘GoalSet’ XML node defines properties of a goal and the next goal set agents will move to.
+The **GoalSet** XML node defines properties of a goal and the next goal set agents will move to.
 * The **capacity** attribute defines the maximum number of agents that can be at a goal inside of this goal set. This defaults to 1.
 * The **min** attribute defines the minimum amount of time (steps in the simulation) an agent will wait before transitioning to another goal. This defaults to 0.
 * The **max** attribute defines the maximum amount of time (steps in the simulation) an agent will wait before transitioning to another goal. This defaults to 0.
@@ -122,13 +122,79 @@ The **Color** XML node defines the RGB value associated with a spawn or goal set
 
 # 4. Running the File Generator
 ## Installing Dependencies
-* You will need to download the following:
-Python3.
+You will need to download the following:
+* Python3
+
 You will need to use Python’s package manager pip to install the following python packages:
 * pillow (version 6.00)
 * imageio (version 2.5.0)
 * numpy (version 1.16.4)
 * scipy (version 1.1.0)
-This can be done with the command 	`sudo pip3 install pillow imageio numpy scipy`
+This can be done with the command `sudo pip3 install pillow imageio numpy scipy`
+
+## Command Arguments and Flags
+* path: path to the Scenario XML File
+* -b: path to the Scenario Behavior PNG File
+  * Will use the same base file name as the XML with '.png' extension.
+* -w: path to the Scenario Wall PNG File
+  * Will use the base file name of the XML file with 'Walls.png' extension.
+
+## Program Output
+* If successful all generated files will be outputted into a folder named after the Scenario XML File.
+* A command to run the scenario using Menge will be printed to the console.
 
 # 5. Bottleneck Example
+## Scenario Wall PNG File
+* This file is saved as [BottleNeckWalls.png]((https://github.com/Ntsee/MengeFileGenerator/blob/master/example/BottleNeckWalls.png)) in the example folder. 
+* The image below has a size of 100x100 pixels. There is a wall in the middle of the simulation with a tight choke in the middle through which agents can pass.
+
+![Image of Bottle Neck Scenario Behavior PNG File](https://github.com/Ntsee/MengeFileGenerator/blob/master/example/BottleNeckWalls.png)
+
+## Scenario Behavior PNG File
+* This file is saved as [BottleNeck.png](https://github.com/Ntsee/MengeFileGenerator/blob/master/example/BottleNeck.png) in the example folder.
+* The image below has a size of 100x100 pixels. It is a copy of the Scenario Wall PNG File. 
+* A line of red pixels with an RGB value of (237, 28, 36) has been added to the left side. 
+* A line of blue pixels with an RGB value of (63, 72, 204) has been added to the right side.
+
+![Image of Bottle Neck Scenario Wall PNG File](https://github.com/Ntsee/MengeFileGenerator/blob/master/example/BottleNeck.png)
+
+## Scenario XML File
+* This file is saved as [BottleNeck.xml](https://github.com/Ntsee/MengeFileGenerator/blob/master/example/BottleNeck.xml) in the example folder.
+* The first group (denoted as ‘Left Group’) has a speed of 1 and size of 90. Agents in this group will spawn at a random red pixel. This group will head towards a random blue pixel (their goal). Upon arrival, agents will wait at their goal for the remainder of the simulation.
+* The second group (denoted as ‘Right Group’) has a speed of 1 and size of 90. Agents in this group will spawn at a random blue pixel. This group will head towards a random red pixel (their goal). Upon arrival, agents will wait at their goal for the remainder of the simulation.
+* `<!-- ... -->` tags are comments are only included to help explain the example.
+```xml
+<Data>
+	<!-- Left Group -->
+	<Group speed=”1” amount=”90”>
+		<Spawn min=”0” max=”0”>
+			<Color r=”237” g=”28” b=”36” />
+			<Transition to=”0” chance=”1” />
+		</Spawn>
+		
+		<GoalSet capacity=”1” min=”1000” max=”1000”>
+			<Color r=”63” b=”72” g=”204” />
+			<Transition to=”0” chance=”1” />
+		</GoalSet>
+	</Group>
+
+	<!-- Right Group -->
+	<Group speed=”1” amount=”90”>
+		<Spawn min=”0” max=”0”>
+			<Color r=”63” b=”72” g=”204” />
+			<Transition to=”0” chance=”1” />
+		</Spawn>
+		
+		<GoalSet capacity=”1” min=”1000” max=”1000”>
+			<Color r=”237” g=”28” b=”36” />
+			<Transition to=”0” chance=”1” />
+		</GoalSet>
+	</Group>
+</Data>
+```
+
+## Running the Generator
+1. Open the terminal and change your directory to the folder containing menge_generator.py.
+1. Use the command `python3 menge_generator.py ./example/BottleNeck.xml`
+1. When the command is done running you should see a completion message and how to run the example in menge.
+1. You should now see a new folder called `./BottleNeck/` that will contain the generated files.
