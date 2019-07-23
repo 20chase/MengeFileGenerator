@@ -1,4 +1,6 @@
 # Menge File Generator
+This program is used to generate the files used to run a scenario in [Menge](https://github.com/MengeCrowdSim/Menge). A compiled version of [Menge](https://github.com/MengeCrowdSim/Menge) has been included inside of this repository. 
+
 ## Table of Contents
 1. [Creating the Scenario Wall PNG File](#1-creating-the-scenario-wall-png-file)
 1. [Creating the Scenario Behavior PNG File](#2-creating-the-scenario-behavior-png-file)
