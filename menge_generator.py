@@ -332,23 +332,23 @@ def main():
     BEHAVIOR_IMAGE = imageio.imread(BEHAVIOR_PNG_PATH)
     WALL_IMAGE = imageio.imread(WALL_PNG_PATH)
 
-    if not os.path.exists("%s/" % SCENARIO_NAME):
-        print("Creating output directory './%s/'" % SCENARIO_NAME, end='\r', flush=True)
-        os.makedirs("%s/" % SCENARIO_NAME)
+    if not os.path.exists("%s/" % OUTPUT_PATH):
+        print("Creating output directory './%s/'" % OUTPUT_PATH, end='\r', flush=True)
+        os.makedirs("%s/" % OUTPUT_PATH)
 
-    print("Creating link file '%s/%s.xml'..." % (SCENARIO_NAME, SCENARIO_NAME), end='\r', flush=True)
+    print("Creating link file '%s/%s.xml'..." % (OUTPUT_PATH, SCENARIO_NAME), end='\r', flush=True)
     link_xml = create_XML_link()
-    write_to_XML(link_xml, '%s/%s' % (SCENARIO_NAME, SCENARIO_NAME))
+    write_to_XML(link_xml, '%s/%s' % (OUTPUT_PATH, SCENARIO_NAME))
 
-    print("Creating viewer file '%s/%sV.xml'..." % (SCENARIO_NAME, SCENARIO_NAME), end='\r', flush=True)
+    print("Creating viewer file '%s/%sV.xml'..." % (OUTPUT_PATH, SCENARIO_NAME), end='\r', flush=True)
     create_XML_viewer()
-    write_to_XML(VIEWER_XML, '%s/%sV' % (SCENARIO_NAME, SCENARIO_NAME))
+    write_to_XML(VIEWER_XML, '%s/%sV' % (OUTPUT_PATH, SCENARIO_NAME))
 
     print("Creating behavior file '%s/%sB.xml..." % (SCENARIO_NAME, SCENARIO_NAME), end='\r', flush=True)
     COLOR_DICTIONARY = create_color_dictionary(BEHAVIOR_IMAGE)
     if not create_XML_scene_behavior():
         return
-    write_to_XML(BEHAVIOR_XML, '%s/%sB' % (SCENARIO_NAME, SCENARIO_NAME))
+    write_to_XML(BEHAVIOR_XML, '%s/%sB' % (OUTPUT_PATH, SCENARIO_NAME))
 
     print("Creating scene file '%s/%sS.xml..." % (SCENARIO_NAME, SCENARIO_NAME), end='\r', flush=True)
     wall_points = square_generator.build_point_dict(WALL_IMAGE, 255)
@@ -360,9 +360,9 @@ def main():
     }
     obstacle_set_node = wall_generator.create_obstacle_set(data)
     SCENE_XML.append(obstacle_set_node)
-    write_to_XML(SCENE_XML, '%s/%sS' % (SCENARIO_NAME, SCENARIO_NAME))
+    write_to_XML(SCENE_XML, '%s/%sS' % (OUTPUT_PATH, SCENARIO_NAME))
 
-    print("Creating road map file %s/%s.txt..." % (SCENARIO_NAME, SCENARIO_NAME), end='\r', flush=True)
+    print("Creating road map file %s/%s.txt..." % (OUTPUT_PATH, SCENARIO_NAME), end='\r', flush=True)
     walkable_points = square_generator.build_point_dict(WALL_IMAGE, 0)
     walkable_squares = square_generator.build_square_list(WALL_IMAGE, walkable_points)
     data = {
@@ -371,7 +371,7 @@ def main():
         'squares': walkable_squares,
         'graph': square_generator.build_border_dict(walkable_squares),
     }
-    graph_generator.build("%s/%s" % (SCENARIO_NAME, SCENARIO_NAME), data)
+    graph_generator.build("%s/%s" % (OUTPUT_PATH, SCENARIO_NAME), data)
 
     print("Completed! Use the following command to run the scenario in menge:")
     print("./menge -d 2000 -p %s/%s/%s.xml" % (os.getcwd(), SCENARIO_NAME, SCENARIO_NAME))
@@ -381,6 +381,7 @@ parser = argparse.ArgumentParser(description="Generate files used to run simulat
 parser.add_argument("path", help="path to the scenario XML file")
 parser.add_argument("-b", "--behavior", help="path to the scenario behavior PNG file")
 parser.add_argument("-w", "--wall", help="path to the scenario wall PNG file")
+parser.add_argument("-o", "--output", help="directory to output to")
 args = parser.parse_args()
 
 XML_PATH = args.path
@@ -390,13 +391,9 @@ if args.behavior:
 WALL_PNG_PATH = XML_PATH.replace(".xml", "Walls.png")
 if args.wall:
     WALL_PNG_PATH = args.wall
+OUTPUT_PATH = SCENARIO_NAME
+if args.output:
+    OUTPUT_PATH = args.output
 SCENARIO_NAME = os.path.basename(XML_PATH)[:-4]
 
 main()
-
-
-
-
-
-
-
