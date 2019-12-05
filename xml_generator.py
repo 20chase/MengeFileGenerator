@@ -65,6 +65,14 @@ def make_state_travel(name, goal_set_id, map_name):
 
 ''' ----------- Transitions  ----------- '''
 
+def make_transition_auto(fro, to):
+    node = et.Element('Transition')
+    node.set('from', fro)
+    node.set('to', to)
+    condition = et.SubElement(node, 'Condition')
+    condition.set('type', 'auto')
+    return node
+
 
 def make_transition_timer(fro, to, min, max):
     node = et.Element('Transition')

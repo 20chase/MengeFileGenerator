@@ -10,7 +10,6 @@ import wall_generator
 import xml_generator
 
 
-SCENARIO_NAME = 'TightBottleNeck'
 BEHAVIOR_IMAGE = None
 WALL_IMAGE = None
 
@@ -145,7 +144,8 @@ def add_spawn(group_id, group_node):
     wait_node = xml_generator.make_state_static(state_wait_name, '0', 'zero')
     BEHAVIOR_XML.append(wait_node)
 
-    start_wait_tran = xml_generator.make_transition_timer(state_start_name, state_wait_name, min, max)
+    # start_wait_tran = xml_generator.make_transition_timer(state_start_name, state_wait_name, min, max)
+    start_wait_tran = xml_generator.make_transition_auto(state_start_name, state_wait_name)
     BEHAVIOR_XML.append(start_wait_tran)
 
     locations = []
@@ -197,7 +197,7 @@ def add_spawn(group_id, group_node):
 def add_goals(group_id, group_node, total_goalsets):
 
     for goal_set_id, goal_set_node in enumerate(group_node.findall('GoalSet')):
-
+        
         state_travel_name = 'Travel_%d_%d' % (group_id, goal_set_id)
         travel_node = xml_generator.make_state_travel(state_travel_name, goal_set_id + total_goalsets, SCENARIO_NAME)
         BEHAVIOR_XML.append(travel_node)
@@ -234,38 +234,41 @@ def add_goals(group_id, group_node, total_goalsets):
             print("[WARNING] Invalid type for 'max' attribute in group %d goal set %d. Using default value %d." %
                   (group_id, goal_set_id, max))
 
-        timer_tran = xml_generator.make_transition_timer(state_arrive_name, state_wait_name, min, max)
+        # timer_tran = xml_generator.make_transition_timer(state_arrive_name, state_wait_name, min, max)
+        start_name = "Start_Wait_%d" % (group_id)
+        timer_tran = xml_generator.make_transition_auto(state_arrive_name, start_name)
         BEHAVIOR_XML.append(timer_tran)
 
-        next_destinations = []
-        for transition_id, transition_node in enumerate(goal_set_node.findall('Transition')):
-            to = goal_set_id
-            try:
-                to = int(transition_node.attrib['to'])
-            except KeyError:
-                print("[WARNING] Missing 'to' attribute in group %d goal set %d transition %d. Using default value %d." %
-                      (group_id, goal_set_id, transition_id, to))
-            except ValueError:
-                print("[WARNING] Invalid type for 'to' attribute in group %d goal set %d transition %d. Using default value %d." %
-                      (group_id, goal_set_id, transition_id, to))
+        # next_destinations = []
+        # for transition_id, transition_node in enumerate(goal_set_node.findall('Transition')):
+        #     to = goal_set_id
+        #     try:
+        #         to = int(transition_node.attrib['to'])
+        #     except KeyError:
+        #         print("[WARNING] Missing 'to' attribute in group %d goal set %d transition %d. Using default value %d." %
+        #               (group_id, goal_set_id, transition_id, to))
+        #     except ValueError:
+        #         print("[WARNING] Invalid type for 'to' attribute in group %d goal set %d transition %d. Using default value %d." %
+        #               (group_id, goal_set_id, transition_id, to))
 
-            chance = 1
-            try:
-                chance = float(transition_node.attrib['chance'])
-            except KeyError:
-                print("[WARNING] Missing 'chance' attribute in group %d goal set %d transition %d. Using default value %d." %
-                    (group_id, goal_set_id, transition_id, chance))
-            except ValueError:
-                print("[WARNING] Invalid type for 'chance' attribute in group %d goal set %d transition %d. Using default value %d." %
-                    (group_id, goal_set_id, transition_id, chance))
+        #     chance = 1
+        #     try:
+        #         chance = float(transition_node.attrib['chance'])
+        #     except KeyError:
+        #         print("[WARNING] Missing 'chance' attribute in group %d goal set %d transition %d. Using default value %d." %
+        #             (group_id, goal_set_id, transition_id, chance))
+        #     except ValueError:
+        #         print("[WARNING] Invalid type for 'chance' attribute in group %d goal set %d transition %d. Using default value %d." %
+        #             (group_id, goal_set_id, transition_id, chance))
 
-            if goal_set_id == int(to):
-                next_destinations.append(tuple(('Arrive_%d_%d' % (group_id, goal_set_id), chance)))
-            else:
-                next_destinations.append(tuple(('Travel_%d_%d' % (group_id, goal_set_id), chance)))
+        #     if goal_set_id == int(to):
+        #         next_destinations.append(tuple(('Arrive_%d_%d' % (group_id, goal_set_id), chance)))
+        #     else:
+        #         next_destinations.append(tuple(('Travel_%d_%d' % (group_id, goal_set_id), chance)))
 
-        destination_tran = xml_generator.make_transition_random(state_wait_name, next_destinations)
-        BEHAVIOR_XML.append(destination_tran)
+        # destination_tran = xml_generator.make_transition_random(state_wait_name, next_destinations)
+        # # destination_tran = xml_generator.make_transition_auto(state_wait_name, next_destinations[0])
+        # BEHAVIOR_XML.append(destination_tran)
 
 
 def create_XML_link():
@@ -333,24 +336,24 @@ def main():
     WALL_IMAGE = imageio.imread(WALL_PNG_PATH)
 
     if not os.path.exists("%s/" % OUTPUT_PATH):
-        print("Creating output directory './%s/'" % OUTPUT_PATH, end='\r', flush=True)
+        print("Creating output directory './%s/'" % OUTPUT_PATH)
         os.makedirs("%s/" % OUTPUT_PATH)
 
-    print("Creating link file '%s/%s.xml'..." % (OUTPUT_PATH, SCENARIO_NAME), end='\r', flush=True)
+    print("Creating link file '%s/%s.xml'..." % (OUTPUT_PATH, SCENARIO_NAME))
     link_xml = create_XML_link()
     write_to_XML(link_xml, '%s/%s' % (OUTPUT_PATH, SCENARIO_NAME))
 
-    print("Creating viewer file '%s/%sV.xml'..." % (OUTPUT_PATH, SCENARIO_NAME), end='\r', flush=True)
+    print("Creating viewer file '%s/%sV.xml'..." % (OUTPUT_PATH, SCENARIO_NAME))
     create_XML_viewer()
     write_to_XML(VIEWER_XML, '%s/%sV' % (OUTPUT_PATH, SCENARIO_NAME))
 
-    print("Creating behavior file '%s/%sB.xml..." % (SCENARIO_NAME, SCENARIO_NAME), end='\r', flush=True)
+    print("Creating behavior file '%s/%sB.xml..." % (SCENARIO_NAME, SCENARIO_NAME))
     COLOR_DICTIONARY = create_color_dictionary(BEHAVIOR_IMAGE)
     if not create_XML_scene_behavior():
         return
     write_to_XML(BEHAVIOR_XML, '%s/%sB' % (OUTPUT_PATH, SCENARIO_NAME))
 
-    print("Creating scene file '%s/%sS.xml..." % (SCENARIO_NAME, SCENARIO_NAME), end='\r', flush=True)
+    print("Creating scene file '%s/%sS.xml..." % (SCENARIO_NAME, SCENARIO_NAME))
     wall_points = square_generator.build_point_dict(WALL_IMAGE, 255)
     wall_squares = square_generator.build_square_list(WALL_IMAGE, wall_points)
     data = {
@@ -362,7 +365,7 @@ def main():
     SCENE_XML.append(obstacle_set_node)
     write_to_XML(SCENE_XML, '%s/%sS' % (OUTPUT_PATH, SCENARIO_NAME))
 
-    print("Creating road map file %s/%s.txt..." % (OUTPUT_PATH, SCENARIO_NAME), end='\r', flush=True)
+    print("Creating road map file %s/%s.txt..." % (OUTPUT_PATH, SCENARIO_NAME))
     walkable_points = square_generator.build_point_dict(WALL_IMAGE, 0)
     walkable_squares = square_generator.build_square_list(WALL_IMAGE, walkable_points)
     data = {
@@ -391,9 +394,9 @@ if args.behavior:
 WALL_PNG_PATH = XML_PATH.replace(".xml", "Walls.png")
 if args.wall:
     WALL_PNG_PATH = args.wall
+SCENARIO_NAME = os.path.basename(XML_PATH)[:-4]
 OUTPUT_PATH = SCENARIO_NAME
 if args.output:
     OUTPUT_PATH = args.output
-SCENARIO_NAME = os.path.basename(XML_PATH)[:-4]
 
 main()
