@@ -377,7 +377,6 @@ def main():
     graph_generator.build("%s/%s" % (OUTPUT_PATH, SCENARIO_NAME), data)
 
     print("Completed! Use the following command to run the scenario in menge:")
-    print("./menge -d 2000 -p %s/%s/%s.xml" % (os.getcwd(), SCENARIO_NAME, SCENARIO_NAME))
 
 
 parser = argparse.ArgumentParser(description="Generate files used to run simulations with Menge.")
