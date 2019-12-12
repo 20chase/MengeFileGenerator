@@ -36,14 +36,14 @@ def create_vertex(parent, x, y):
 # create_obstacle(XMLNode, tuple[4])
 # Inserts a obstacle XML node inside of the parent node with 4 vertexes
 # Returns: The created Obstacle XML node
-def create_obstacle(parent, square):
+def create_obstacle(parent, square, resolution=0.5):
     node = ET.SubElement(parent, 'Obstacle')
     node.set('closed', '1')
     x1, x2, y1, y2 = square
-    create_vertex(node, x1, y2)
-    create_vertex(node, x2, y2)
-    create_vertex(node, x2, y1)
-    create_vertex(node, x1, y1)
+    create_vertex(node, x1*resolution, y2*resolution)
+    create_vertex(node, x2*resolution, y2*resolution)
+    create_vertex(node, x2*resolution, y1*resolution)
+    create_vertex(node, x1*resolution, y1*resolution)
     return node
 
 
@@ -64,14 +64,14 @@ def create_border(parent, width, height):
 # createObstacleSet(data)
 # Creates an ObstacleSet parent XML node filled with obstacles
 # Returns: The created ObstacleSet node
-def create_obstacle_set(data):
+def create_obstacle_set(data, resolution=0.5):
     data = adjust_coordinates(data)
     root = ET.Element('ObstacleSet')
     root.set('type', 'explicit')
     root.set('class', '1')
-    create_border(root, data['width'], data['height'])
+    create_border(root, data['width']*resolution, data['height']*resolution)
     for square in data['squares']:
-        create_obstacle(root, square)
+        create_obstacle(root, square, resolution=resolution)
     return root
 
 

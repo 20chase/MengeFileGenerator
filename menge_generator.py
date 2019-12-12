@@ -19,7 +19,7 @@ BEHAVIOR_XML = et.Element('BFSM')
 VIEWER_XML = et.parse('base_viewer.xml').getroot()
 COLOR_DICTIONARY = {}
 
-def create_color_dictionary(image):
+def create_color_dictionary(image, resolution=0.5):
     height = image.shape[0]
     width = image.shape[1]
     color_coords = {}
@@ -28,7 +28,7 @@ def create_color_dictionary(image):
             rgb = tuple(image[y][x][:3])
             if color_coords.get(rgb) is None:
                 color_coords[rgb] = []
-            color_coords[rgb].append((x, height - y))
+            color_coords[rgb].append((x*resolution, (height - y)*resolution))
     return color_coords
 
 
@@ -233,9 +233,12 @@ def add_goals(group_id, group_node, total_goalsets):
         except ValueError:
             print("[WARNING] Invalid type for 'max' attribute in group %d goal set %d. Using default value %d." %
                   (group_id, goal_set_id, max))
-
         # timer_tran = xml_generator.make_transition_timer(state_arrive_name, state_wait_name, min, max)
-        start_name = "Start_Wait_%d" % (group_id)
+        if len(group_node.findall('GoalSet')) == (goal_set_id+1):
+            start_name = "Start_Wait_%d" % (group_id)
+        else:
+            start_name = "Travel_{}_{}".format(group_id, goal_set_id+1)
+
         timer_tran = xml_generator.make_transition_auto(state_arrive_name, start_name)
         BEHAVIOR_XML.append(timer_tran)
 
@@ -328,7 +331,7 @@ def write_to_XML(node, fileName):
 ######################## Main Program ######################## 
 '''
 
-def main():
+def main(resolution):
 
     global MAIN_XML, BEHAVIOR_IMAGE, WALL_IMAGE, COLOR_DICTIONARY
     MAIN_XML = et.parse(XML_PATH).getroot()
@@ -348,7 +351,7 @@ def main():
     write_to_XML(VIEWER_XML, '%s/%sV' % (OUTPUT_PATH, SCENARIO_NAME))
 
     print("Creating behavior file '%s/%sB.xml..." % (SCENARIO_NAME, SCENARIO_NAME))
-    COLOR_DICTIONARY = create_color_dictionary(BEHAVIOR_IMAGE)
+    COLOR_DICTIONARY = create_color_dictionary(BEHAVIOR_IMAGE, resolution=resolution)
     if not create_XML_scene_behavior():
         return
     write_to_XML(BEHAVIOR_XML, '%s/%sB' % (OUTPUT_PATH, SCENARIO_NAME))
@@ -357,11 +360,11 @@ def main():
     wall_points = square_generator.build_point_dict(WALL_IMAGE, 255)
     wall_squares = square_generator.build_square_list(WALL_IMAGE, wall_points)
     data = {
-        'width': WALL_IMAGE.shape[1],
-        'height': WALL_IMAGE.shape[0],
+        'width': int(WALL_IMAGE.shape[1]),
+        'height': int(WALL_IMAGE.shape[1]),
         'squares': wall_squares
     }
-    obstacle_set_node = wall_generator.create_obstacle_set(data)
+    obstacle_set_node = wall_generator.create_obstacle_set(data, resolution=resolution)
     SCENE_XML.append(obstacle_set_node)
     write_to_XML(SCENE_XML, '%s/%sS' % (OUTPUT_PATH, SCENARIO_NAME))
 
@@ -369,12 +372,12 @@ def main():
     walkable_points = square_generator.build_point_dict(WALL_IMAGE, 0)
     walkable_squares = square_generator.build_square_list(WALL_IMAGE, walkable_points)
     data = {
-        'width': WALL_IMAGE.shape[1],
-        'height': WALL_IMAGE.shape[0],
+        'width': int(WALL_IMAGE.shape[1]),
+        'height': int(WALL_IMAGE.shape[1]),
         'squares': walkable_squares,
         'graph': square_generator.build_border_dict(walkable_squares),
     }
-    graph_generator.build("%s/%s" % (OUTPUT_PATH, SCENARIO_NAME), data)
+    graph_generator.build("%s/%s" % (OUTPUT_PATH, SCENARIO_NAME), data, resolution=resolution)
 
     print("Completed! Use the following command to run the scenario in menge:")
 
@@ -384,6 +387,7 @@ parser.add_argument("path", help="path to the scenario XML file")
 parser.add_argument("-b", "--behavior", help="path to the scenario behavior PNG file")
 parser.add_argument("-w", "--wall", help="path to the scenario wall PNG file")
 parser.add_argument("-o", "--output", help="directory to output to")
+parser.add_argument("-r", "--resolution", default=0.5, type=float)
 args = parser.parse_args()
 
 XML_PATH = args.path
@@ -398,4 +402,4 @@ OUTPUT_PATH = SCENARIO_NAME
 if args.output:
     OUTPUT_PATH = args.output
 
-main()
+main(args.resolution)

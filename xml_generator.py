@@ -123,6 +123,11 @@ def make_agent_profile(id, speed):
     properties = et.SubElement(node, 'Common')
     properties.set('class', str(id))
     properties.set('pref_speed', str(speed))
+    pref_speed = et.SubElement(properties, "Property")
+    pref_speed.set("name", "pref_speed")
+    pref_speed.set("dist", "n")
+    pref_speed.set("mean", str(speed))
+    pref_speed.set("stddev", "0.2")
     return node
 
 

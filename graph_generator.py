@@ -507,7 +507,7 @@ def connect_graph_squares(squares, vmap, edges, border_dict):
 
 # write_to_TXT(list(vertices), list(edges), string)
 # Writes the given vertices and edges to file
-def write_to_TXT(vmap, edges, fileName):
+def write_to_TXT(vmap, edges, fileName, resolution=0.5):
 
     outfile = open(fileName + '.txt', 'w')
 
@@ -520,7 +520,7 @@ def write_to_TXT(vmap, edges, fileName):
             if vid == v1 or vid == v2:
                 degree += 1
 
-        outfile.write("%d %d %d\n" % (degree, inverse_vmap[i][0], inverse_vmap[i][1]))
+        outfile.write("%d %f %f\n" % (degree, inverse_vmap[i][0]*resolution, inverse_vmap[i][1]*resolution))
 
     outfile.write('%d\n' % len(edges))
     for edge in edges.keys():
@@ -529,13 +529,12 @@ def write_to_TXT(vmap, edges, fileName):
     outfile.close()
 
 
-def build(base_name, data):
+def build(base_name, data, resolution=0.5):
 
     # Stores the vertex ID of a certain x, y coordinate.
     # (x, y): vertexID
     vmap = {}
     edges = {}
-
     square_list = build_squares(data['squares'])
     merge_squares(square_list, data['graph'])
 
@@ -554,4 +553,4 @@ def build(base_name, data):
     '''
 
 
-    write_to_TXT(vmap, edges, base_name)
+    write_to_TXT(vmap, edges, base_name, resolution=resolution)
