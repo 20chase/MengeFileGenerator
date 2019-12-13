@@ -281,6 +281,7 @@ def create_XML_link():
     root.set('view', '%sV.xml' % SCENARIO_NAME)
     root.set('model', 'orca')
     root.set('dumpPath', 'images/%s' % SCENARIO_NAME)
+    root.set('duration', str(1000000000))
     return root
 
 
