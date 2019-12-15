@@ -8,28 +8,33 @@ class RoadMapGenerator(object):
 
     def generate(self, image, resolution, output_path):
         free_cells = self._get_free_cells(image, resolution)
-        self._check_collision(free_cells, output_path)
+        self._check_collision(free_cells, output_path, resolution)
 
     def _get_free_cells(self, image, resolution):
         cells = defaultdict(int)
         for x in range(image.shape[0]):
             for y in range(image.shape[1]):
                 if np.sum(image[x][y][:]) == 255*3:
-                    cell_x = np.round(resolution*y)
-                    cell_y = np.round(
-                        resolution*(image.shape[0] - 1 - x)
-                        )
-                    cells[(cell_x, cell_y)] += 1
+                    # cell_x = np.round(resolution*y)
+                    # cell_y = np.round(
+                    #     resolution*(image.shape[0] - 1 - x)
+                    #     )
+                    # cells[(cell_x, cell_y)] += 1
 
-        free_cells = {}
-        free_threshold = np.max(cells.values())
-        for pos, v in cells.items():
-            if v >= (0.125/resolution)*free_threshold:
-                free_cells[pos] = 1
+                    cell_x = y
+                    cell_y = image.shape[0] - x - 1
+                    cells[(cell_x, cell_y)] = 1
+
+        free_cells = cells
+        # free_cells = {}
+        # free_threshold = np.max(cells.values())
+        # for pos, v in cells.items():
+        #     if v >= (0.125/resolution)*free_threshold:
+        #         free_cells[pos] = 1
 
         return free_cells
 
-    def _check_collision(self, free_cells, output_path):
+    def _check_collision(self, free_cells, output_path, resolution):
         outfile = open("{}/{}.txt".format(
             output_path, self.scene_name), 'w'
             )        
@@ -41,11 +46,7 @@ class RoadMapGenerator(object):
             for next_cell in [[0, -1], 
                               [0, 1], 
                               [-1, 0], 
-                              [1, 0], 
-                              [-1, -1], 
-                              [-1, 1], 
-                              [1, -1], 
-                              [1, 1]]:
+                              [1, 0]]:
                 new_x = pos[0] + next_cell[0]
                 new_y = pos[1] + next_cell[1]
                 new_pos = (new_x, new_y)
@@ -60,8 +61,8 @@ class RoadMapGenerator(object):
             
             num_edges = len(checked_cells[pos])
             outfile.write("%d %f %f\n" % (num_edges, 
-                                          pos[0], 
-                                          pos[1]))
+                                          resolution*pos[0], 
+                                          resolution*pos[1]))
 
         outfile.write('%d\n' % len(edges))
         for edge in edges:

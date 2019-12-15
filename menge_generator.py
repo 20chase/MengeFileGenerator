@@ -10,6 +10,7 @@ import wall_generator
 import xml_generator
 
 from roadmap_generator import RoadMapGenerator
+from block_generator import BlockGenerator
 
 
 BEHAVIOR_IMAGE = None
@@ -360,14 +361,16 @@ def main(resolution):
     write_to_XML(BEHAVIOR_XML, '%s/%sB' % (OUTPUT_PATH, SCENARIO_NAME))
 
     print("Creating scene file '%s/%sS.xml..." % (SCENARIO_NAME, SCENARIO_NAME))
-    wall_points = square_generator.build_point_dict(WALL_IMAGE, 255)
-    wall_squares = square_generator.build_square_list(WALL_IMAGE, wall_points)
-    data = {
-        'width': int(WALL_IMAGE.shape[1]),
-        'height': int(WALL_IMAGE.shape[1]),
-        'squares': wall_squares
-    }
-    obstacle_set_node = wall_generator.create_obstacle_set(data, resolution=resolution)
+    # wall_points = square_generator.build_point_dict(WALL_IMAGE, 255)
+    # wall_squares = square_generator.build_square_list(WALL_IMAGE, wall_points)
+    # data = {
+    #     'width': int(WALL_IMAGE.shape[1]),
+    #     'height': int(WALL_IMAGE.shape[1]),
+    #     'squares': wall_squares
+    # }
+    # obstacle_set_node = wall_generator.create_obstacle_set(data, resolution=resolution)
+    block_generator = BlockGenerator()
+    obstacle_set_node = block_generator.generate(WALL_IMAGE, resolution)
     SCENE_XML.append(obstacle_set_node)
     write_to_XML(SCENE_XML, '%s/%sS' % (OUTPUT_PATH, SCENARIO_NAME))
 

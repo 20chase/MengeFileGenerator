@@ -9,7 +9,7 @@
 		<Common max_angle_vel="180" max_neighbors="10" obstacleSet="1" neighbor_dist="5" r=".35"  pref_speed="1" max_accel="5" priority="0.0"/>
 		<PedVO factor="1.57" buffer="0.9" tau="3" tauObst="1" turningBias="1.0" />
         <Helbing mass="80" />
-        <ORCA tau="10" tauObst="3" />
+        <ORCA tau="3" tauObst="1" />
         <GCF stand_depth="0.18" move_scale="0.53" slow_width="0.25" sway_change="0.05" />
 	</AgentProfile>
 </Experiment>
