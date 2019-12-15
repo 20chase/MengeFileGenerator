@@ -6,7 +6,7 @@
     <Helbing agent_scale="2000" obstacle_scale="4000" reaction_time="0.5" body_force="1200" friction="2400" force_distance="0.015" />
     <Dummy stddev="0.05" />
 	<AgentProfile name="base" >
-		<Common max_angle_vel="180" max_neighbors="10" obstacleSet="1" neighbor_dist="5" r=".35"  pref_speed="1" max_accel="5" priority="0.0"/>
+		<Common max_angle_vel="90" max_neighbors="5" obstacleSet="1" neighbor_dist="5" r=".35"  pref_speed="1" max_accel="5" priority="0.0"/>
 		<PedVO factor="1.57" buffer="0.9" tau="3" tauObst="1" turningBias="1.0" />
         <Helbing mass="80" />
         <ORCA tau="3" tauObst="1" />

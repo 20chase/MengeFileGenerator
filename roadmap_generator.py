@@ -25,7 +25,27 @@ class RoadMapGenerator(object):
                     cell_y = image.shape[0] - x - 1
                     cells[(cell_x, cell_y)] = 1
 
-        free_cells = cells
+        # free_cells = cells
+        free_cells = {}
+        for pos in cells.keys():
+            free_number = 0
+            for next_cell in [[0, -1], 
+                              [0, 1], 
+                              [-1, 0], 
+                              [1, 0], 
+                              [-1, -1], 
+                              [-1, 1], 
+                              [1, -1], 
+                              [1, 1]]:
+                new_x = pos[0] + next_cell[0]
+                new_y = pos[1] + next_cell[1]
+                new_pos = (new_x, new_y)
+                if new_pos in cells:
+                    free_number += 1
+
+            if free_number == 8:
+                free_cells[pos] = 1
+
         # free_cells = {}
         # free_threshold = np.max(cells.values())
         # for pos, v in cells.items():
@@ -46,7 +66,11 @@ class RoadMapGenerator(object):
             for next_cell in [[0, -1], 
                               [0, 1], 
                               [-1, 0], 
-                              [1, 0]]:
+                              [1, 0], 
+                              [-1, -1], 
+                              [-1, 1], 
+                              [1, -1], 
+                              [1, 1]]:
                 new_x = pos[0] + next_cell[0]
                 new_y = pos[1] + next_cell[1]
                 new_pos = (new_x, new_y)

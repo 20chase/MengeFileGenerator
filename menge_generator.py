@@ -242,39 +242,39 @@ def add_goals(group_id, group_node, total_goalsets):
         else:
             start_name = "Travel_{}_{}".format(group_id, goal_set_id+1)
 
-        timer_tran = xml_generator.make_transition_auto(state_arrive_name, start_name)
-        BEHAVIOR_XML.append(timer_tran)
+        # timer_tran = xml_generator.make_transition_auto(state_arrive_name, start_name)
+        # BEHAVIOR_XML.append(timer_tran)
 
-        # next_destinations = []
-        # for transition_id, transition_node in enumerate(goal_set_node.findall('Transition')):
-        #     to = goal_set_id
-        #     try:
-        #         to = int(transition_node.attrib['to'])
-        #     except KeyError:
-        #         print("[WARNING] Missing 'to' attribute in group %d goal set %d transition %d. Using default value %d." %
-        #               (group_id, goal_set_id, transition_id, to))
-        #     except ValueError:
-        #         print("[WARNING] Invalid type for 'to' attribute in group %d goal set %d transition %d. Using default value %d." %
-        #               (group_id, goal_set_id, transition_id, to))
+        next_destinations = []
+        for transition_id, transition_node in enumerate(goal_set_node.findall('Transition')):
+            to = goal_set_id
+            try:
+                to = int(transition_node.attrib['to'])
+            except KeyError:
+                print("[WARNING] Missing 'to' attribute in group %d goal set %d transition %d. Using default value %d." %
+                      (group_id, goal_set_id, transition_id, to))
+            except ValueError:
+                print("[WARNING] Invalid type for 'to' attribute in group %d goal set %d transition %d. Using default value %d." %
+                      (group_id, goal_set_id, transition_id, to))
 
-        #     chance = 1
-        #     try:
-        #         chance = float(transition_node.attrib['chance'])
-        #     except KeyError:
-        #         print("[WARNING] Missing 'chance' attribute in group %d goal set %d transition %d. Using default value %d." %
-        #             (group_id, goal_set_id, transition_id, chance))
-        #     except ValueError:
-        #         print("[WARNING] Invalid type for 'chance' attribute in group %d goal set %d transition %d. Using default value %d." %
-        #             (group_id, goal_set_id, transition_id, chance))
+            chance = 1
+            try:
+                chance = float(transition_node.attrib['chance'])
+            except KeyError:
+                print("[WARNING] Missing 'chance' attribute in group %d goal set %d transition %d. Using default value %d." %
+                    (group_id, goal_set_id, transition_id, chance))
+            except ValueError:
+                print("[WARNING] Invalid type for 'chance' attribute in group %d goal set %d transition %d. Using default value %d." %
+                    (group_id, goal_set_id, transition_id, chance))
 
-        #     if goal_set_id == int(to):
-        #         next_destinations.append(tuple(('Arrive_%d_%d' % (group_id, goal_set_id), chance)))
-        #     else:
-        #         next_destinations.append(tuple(('Travel_%d_%d' % (group_id, goal_set_id), chance)))
-
-        # destination_tran = xml_generator.make_transition_random(state_wait_name, next_destinations)
-        # # destination_tran = xml_generator.make_transition_auto(state_wait_name, next_destinations[0])
-        # BEHAVIOR_XML.append(destination_tran)
+            if goal_set_id == int(to):
+                next_destinations.append(tuple(("Start_Wait_%d" % (group_id), chance)))
+            else:
+                next_destinations.append(tuple(('Travel_%d_%d' % (group_id, to), chance)))
+        destination_tran = xml_generator.make_transition_random(state_arrive_name, next_destinations)
+        # destination_tran = xml_generator.make_transition_auto(state_wait_name, next_destinations[0])
+        # print destination_tran
+        BEHAVIOR_XML.append(destination_tran)
 
 
 def create_XML_link():
