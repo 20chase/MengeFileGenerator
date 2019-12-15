@@ -24,7 +24,7 @@ class RoadMapGenerator(object):
         free_cells = {}
         free_threshold = np.max(cells.values())
         for pos, v in cells.items():
-            if v >= 0.5*free_threshold:
+            if v >= (0.125/resolution)*free_threshold:
                 free_cells[pos] = 1
 
         return free_cells
