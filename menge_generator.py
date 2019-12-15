@@ -9,6 +9,8 @@ import square_generator
 import wall_generator
 import xml_generator
 
+from roadmap_generator import RoadMapGenerator
+
 
 BEHAVIOR_IMAGE = None
 WALL_IMAGE = None
@@ -370,15 +372,17 @@ def main(resolution):
     write_to_XML(SCENE_XML, '%s/%sS' % (OUTPUT_PATH, SCENARIO_NAME))
 
     print("Creating road map file %s/%s.txt..." % (OUTPUT_PATH, SCENARIO_NAME))
-    walkable_points = square_generator.build_point_dict(WALL_IMAGE, 0)
-    walkable_squares = square_generator.build_square_list(WALL_IMAGE, walkable_points)
-    data = {
-        'width': int(WALL_IMAGE.shape[1]),
-        'height': int(WALL_IMAGE.shape[1]),
-        'squares': walkable_squares,
-        'graph': square_generator.build_border_dict(walkable_squares),
-    }
-    graph_generator.build("%s/%s" % (OUTPUT_PATH, SCENARIO_NAME), data, resolution=resolution)
+    roadmap_generator = RoadMapGenerator(SCENARIO_NAME)
+    roadmap_generator.generate(WALL_IMAGE, resolution, OUTPUT_PATH)
+    # walkable_points = square_generator.build_point_dict(WALL_IMAGE, 0)
+    # walkable_squares = square_generator.build_square_list(WALL_IMAGE, walkable_points)
+    # data = {
+    #     'width': int(WALL_IMAGE.shape[1]),
+    #     'height': int(WALL_IMAGE.shape[1]),
+    #     'squares': walkable_squares,
+    #     'graph': square_generator.build_border_dict(walkable_squares),
+    # }
+    # graph_generator.build("%s/%s" % (OUTPUT_PATH, SCENARIO_NAME), data, resolution=resolution)
 
     print("Completed! Use the following command to run the scenario in menge:")
 
